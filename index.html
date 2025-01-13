@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla Model Y LR Charge Cost Calc</title>
+    <style>
+        * {
+            font-family: 'Source Code Pro', monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <span>$</span><span id="cost_per_mi"> 0.00</span><span>/30mi</span>
+    </div>
+
+    <div>
+        <label for="cost_per_kwh">$</label>
+        <input type="number" inputmode="decimal" id="cost_per_kwh" name="cost_per_kwh" min="0" max="100" value="0.00"
+            step="0.01" />
+        <span>/kwh</span>
+    </div>
+
+
+    <script>
+        // Efficiency: 1 kWh = 3.5 miles, so the cost per mile is the cost per kWh divided by 3.5
+        const efficiency = 1 / 3.5;
+
+        // Function to update the cost per mile based on the current input value
+        function updateCostPerMile() {
+            const costPerKwh = parseFloat(document.getElementById('cost_per_kwh').value) || 0;
+            const costPerMile = (costPerKwh * efficiency * 30).toFixed(2);
+            document.getElementById('cost_per_mi').textContent = costPerMile;
+        }
+
+        // Set up event listener to update the cost per mile whenever the input changes
+        document.getElementById('cost_per_kwh').addEventListener('input', function () {
+            // Store the updated cost per kWh in localStorage
+            localStorage.setItem('cost_per_kwh', this.value);
+
+            // Update the cost per mile
+            updateCostPerMile();
+        });
+
+        // On page load, get the value from localStorage if it exists
+        window.onload = function () {
+            const savedCostPerKwh = localStorage.getItem('cost_per_kwh');
+
+            // If a saved value exists, use it to set the input field value
+            if (savedCostPerKwh !== null) {
+                document.getElementById('cost_per_kwh').value = savedCostPerKwh;
+            }
+
+            // Update the cost per mile based on the saved or default value
+            updateCostPerMile();
+        };
+    </script>
+</body>
+
+</html>
